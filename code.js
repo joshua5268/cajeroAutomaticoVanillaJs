@@ -41,8 +41,8 @@ function mostarHTML(a){
 
 function validarCantidad(a, b, c){
     if(a <= 0 || typeof(a) == undefined || isNaN(a)){
-        b.classList.add('text-danger');
-        c.classList.add('text-danger');
+        pintaTextoD(b);
+        pintaTextoD(c);
         b.textContent = 'Por favor ingrese una cantidad valida';
         c.textContent = '';
         return false;
@@ -55,8 +55,8 @@ function validarCantidad(a, b, c){
 
 function validarMayor(a, b, c){
     if(a < 10 || a > 990){
-        b.classList.add('text-danger');
-        c.classList.add('text-danger');
+        pintaTextoD(b);
+        pintaTextoD(c);
         b.textContent = 'Lo sentimos, como regla general del banco no puede tener menos de $10 o mas de $990';
         c.textContent = '';
         console.log(a);
@@ -71,13 +71,28 @@ function validarMayor(a, b, c){
 function transaccionTrue(a){
     usuario.saldo = a;
     saldo = usuario.saldo;
-    inputRespuesta.classList.add('text-success');
-    inputMonto.classList.add('text-success');
+    pintaTextoS(inputRespuesta);
+    pintaTextoS(inputMonto);
     inputRespuesta.textContent = 'Transaccion Correcta';
     inputMonto.textContent = `Tu nuevo saldo es de: $${saldo}`;
     localStorage.setItem(correo, saldo);
 }
 
+function pintaTextoD(a){
+    if(a.classList.contains('text-success')){
+        a.classList.replace('text-success', 'text-danger');
+    }else{
+        a.classList.add('text-danger');
+    }
+}
+
+function pintaTextoS(a){
+    if(a.classList.contains('text-danger')){
+        a.classList.replace('text-danger', 'text-success');
+    }else{
+        a.classList.add('text-success');
+    }
+}
 
 //Mostrar HTML inicio
 

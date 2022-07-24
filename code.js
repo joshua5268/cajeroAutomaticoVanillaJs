@@ -8,8 +8,9 @@ const btnCerrar = document.querySelector('#btnCerrar');
 
 const usuarioLocal = localStorage.getItem('correo');
 const usuario = users.filter(user => user.correo == usuarioLocal);
-console.log(usuario);
 
+//permanencia de datos
+if(localStorage.getItem(usuarioLocal)){usuario[0].saldo = localStorage.getItem(usuarioLocal)}
 
 const {name, correo, pass} = usuario[0];
 let {saldo} = usuario[0];
@@ -58,9 +59,9 @@ function validarMayor(a, b, c){
         c.classList.add('text-danger');
         b.textContent = 'Lo sentimos, como regla general del banco no puede tener menos de $10 o mas de $990';
         c.textContent = '';
+        console.log(a);
         return false;
     }else{
-        console.log('shi')
         return true;
     }
 }
@@ -74,6 +75,7 @@ function transaccionTrue(a){
     inputMonto.classList.add('text-success');
     inputRespuesta.textContent = 'Transaccion Correcta';
     inputMonto.textContent = `Tu nuevo saldo es de: $${saldo}`;
+    localStorage.setItem(correo, saldo);
 }
 
 
@@ -127,13 +129,13 @@ retiro.addEventListener('click', () => {
 
     btnRetiro.addEventListener('click', (e) => {
         e.preventDefault();
-        let resultado = 0;
         const monto = Number(inputRetiro.value);
         formRetiro.reset();
+        let resultado = Number(saldo)-Number(monto);
 
         if(validarCantidad(monto, inputRespuesta, inputMonto)){
-            if(validarMayor(saldo-monto, inputRespuesta, inputMonto)){
-                transaccionTrue(saldo-monto);
+            if(validarMayor(resultado, inputRespuesta, inputMonto)){
+                transaccionTrue(resultado);
             }
         }
     });
@@ -173,13 +175,13 @@ ingreso.addEventListener('click', () => {
 
     btnIngreso.addEventListener('click', (e) => {
         e.preventDefault();
-        let resultado = 0;
         const monto = Number(inputIngreso.value);
         formIngreso.reset();
+        let resultado = Number(saldo)+Number(monto);
 
         if(validarCantidad(monto, inputRespuesta, inputMonto)){
-            if(validarMayor(saldo+monto, inputRespuesta, inputMonto)){
-                transaccionTrue(saldo+monto);
+            if(validarMayor(resultado, inputRespuesta, inputMonto)){
+                transaccionTrue(Number(saldo)+Number(monto));
             }
         }
 

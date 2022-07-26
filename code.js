@@ -100,9 +100,16 @@ function pintaTextoS(a){
 
 inicio.addEventListener('click', () => {
     const cuerpo =  `
-    <div class="card my-5 p-5 text-center">
-        <h3 class="card-title mb-5">Tu saldo actual es de: </h3>
-        <p class="fs-5">$${saldo}</p>
+    <div class="tarjeta mt-5">
+        <div class="box">
+            <div class="card front d-flex justify-content-center align-items-center">
+                <i class="bi bi-eye-slash-fill" style="font-size: 3rem;"></i>
+            </div>
+            <div class="card back d-flex justify-content-center align-items-center">
+                <h3 class="card-title mb-5">Tu saldo actual es de: </h3>
+                <p class="fs-5">$${saldo}</p>
+            </div>
+        </div>
     </div>
     `;
 

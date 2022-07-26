@@ -22,13 +22,22 @@ btnLogin.addEventListener('click', (e) => {
     if(validarInfo(inputCorreo)){
         arr = users.filter(user => user.correo == inputCorreo)
         if(validarInfo(inputPass)){
-            arr = arr.filter(ar => ar.pass == inputPass);
-            if(arr.length > 0){
-                localStorage.setItem('correo', inputCorreo);
-                window.open('inicio.html',"_self")
+            if(localStorage.getItem(inputCorreo)){
+                if(inputPass == JSON.parse(localStorage.getItem(inputCorreo)).pass){
+                    localStorage.setItem('correo', inputCorreo);
+                    window.open('inicio.html',"_self");
+                }else{
+                    respuesta.textContent = 'Por favor valida tu informacion';
+                }
             }else{
-                respuesta.textContent = 'Por favor valida tu informacion';
-            }
+                arr = arr.filter(ar => ar.pass == inputPass);
+                if(arr.length > 0){
+                    localStorage.setItem('correo', inputCorreo);
+                    window.open('inicio.html',"_self")
+                }else{
+                    respuesta.textContent = 'Por favor valida tu informacion';
+                }
+            }            
         }
     }
 

@@ -2,6 +2,7 @@ const contenido = document.querySelector('#contenido');
 const inicio = document.querySelector('#tagInicio');
 const retiro = document.querySelector('#tagRetiro');
 const ingreso = document.querySelector('#tagIngreso');
+const perfil = document.querySelector('#tagDatos');
 const inputSaldo = document.querySelector('#inputSaldo');
 const bienvenida = document.querySelector('#bienvenida');
 const btnCerrar = document.querySelector('#btnCerrar');
@@ -10,12 +11,13 @@ const usuarioLocal = localStorage.getItem('correo');
 const usuario = users.filter(user => user.correo == usuarioLocal);
 
 //permanencia de datos
-if(localStorage.getItem(usuarioLocal)){usuario[0].saldo = localStorage.getItem(usuarioLocal)}
+if(localStorage.getItem(usuarioLocal)){
+    usuario[0].saldo = JSON.parse(localStorage.getItem(usuarioLocal)).saldo;
+}
 
-const {name, correo, pass} = usuario[0];
+const {name, correo, pass, foto} = usuario[0];
 let {saldo} = usuario[0];
-
-console.log(saldo);
+let localInfo = {saldo: saldo, pass: pass} //Vaiable para permanencia de datos
 
 //Mostrar saludo
 bienvenida.textContent = `Bienvenido ${name}`;
@@ -26,7 +28,7 @@ inputSaldo.textContent = `$${saldo}`;
 
 //Funcion para cambiar de HTML
 
-function mostarHTML(a){
+function mostrarHTML(a){
     const mostrar = document.createElement('div');
     mostrar.innerHTML = a;
 
@@ -59,7 +61,6 @@ function validarMayor(a, b, c){
         pintaTextoD(c);
         b.textContent = 'Lo sentimos, como regla general del banco no puede tener menos de $10 o mas de $990';
         c.textContent = '';
-        console.log(a);
         return false;
     }else{
         return true;
@@ -69,13 +70,14 @@ function validarMayor(a, b, c){
 //Funcion que edita variables si la cantidad es correcta
 
 function transaccionTrue(a){
-    usuario.saldo = a;
-    saldo = usuario.saldo;
+    usuario[0].saldo = a;
+    saldo = usuario[0].saldo;
     pintaTextoS(inputRespuesta);
     pintaTextoS(inputMonto);
     inputRespuesta.textContent = 'Transaccion Correcta';
     inputMonto.textContent = `Tu nuevo saldo es de: $${saldo}`;
-    localStorage.setItem(correo, saldo);
+    localInfo.saldo = saldo;
+    localStorage.setItem(correo, JSON.stringify(localInfo));
 }
 
 function pintaTextoD(a){
@@ -100,15 +102,16 @@ inicio.addEventListener('click', () => {
     const cuerpo =  `
     <div class="card my-5 p-5 text-center">
         <h3 class="card-title mb-5">Tu saldo actual es de: </h3>
-        <p class="fs-5">$ ${saldo}</p>
+        <p class="fs-5">$${saldo}</p>
     </div>
     `;
 
-    mostarHTML(cuerpo);
+    mostrarHTML(cuerpo);
 
     inicio.firstElementChild.classList.add('active');
     retiro.firstElementChild.classList.remove('active');
     ingreso.firstElementChild.classList.remove('active');
+    perfil.firstElementChild.classList.remove('active');
 
 });
 
@@ -130,11 +133,12 @@ retiro.addEventListener('click', () => {
     </div>
     `;
 
-    mostarHTML(cuerpo);
+    mostrarHTML(cuerpo);
 
     retiro.firstElementChild.classList.add('active');
     inicio.firstElementChild.classList.remove('active');
     ingreso.firstElementChild.classList.remove('active');
+    perfil.firstElementChild.classList.remove('active');
 
     const btnRetiro = document.querySelector('#btnRetiro');
     const formRetiro = document.querySelector('#formRetiro');
@@ -176,11 +180,12 @@ ingreso.addEventListener('click', () => {
     </div>
     `;
 
-    mostarHTML(cuerpo);
+    mostrarHTML(cuerpo);
 
     ingreso.firstElementChild.classList.add('active');
     inicio.firstElementChild.classList.remove('active');
     retiro.firstElementChild.classList.remove('active');
+    perfil.firstElementChild.classList.remove('active');
 
     const btnIngreso = document.querySelector('#btnIngreso');
     const formIngreso = document.querySelector('#formIngreso');
@@ -201,6 +206,73 @@ ingreso.addEventListener('click', () => {
         }
 
     });
+
+});
+
+
+perfil.addEventListener('click', () => {
+    const cuerpo = `
+    <div class="card my-5 p-5 text-center perfil">
+            <h3 class="mb-4">MI PERFIL</h3>
+            <div class="container-img p-2">
+                <img src="${foto}" class="img-fluid object-fit">
+            </div>
+            <div class="my-3">
+                <h5>Nombre: ${name}</h5>
+                <h5>Correo: ${correo}</h5>
+                <h5>Saldo: $${saldo}</h5>
+            </div>
+            <button class="btn btn-success" id="btnChange">Cambiar contraseña</button>
+            <div class="d-none" id="divChange">
+                <form id="formPass">
+                    <div class="">
+                        <label for="nueva" class="form-label fs-6">Nueva contraseña</label>
+                        <input type="text" class="form-control mb-2" id="nueva" placeholder="contraseña" required>
+                    </div>
+                    <div class="">
+                        <label for="confirmar" class="form-label fs-6">Confirmar contraseña</label>
+                        <input type="password" class="form-control mb-2" id="confirmar" placeholder="confirmar" required>
+                    </div>
+                    <button class="btn btn-success type="submit" w-100" id="btnNueva">Confirmar</button>
+                </form>
+            </div>
+            <p id="inputRespuesta" class="fs-6 mt-2"></p>
+    </div>
+    `;
+
+    mostrarHTML(cuerpo);
+
+    ingreso.firstElementChild.classList.remove('active');
+    inicio.firstElementChild.classList.remove('active');
+    retiro.firstElementChild.classList.remove('active');
+    perfil.firstElementChild.classList.add('active');
+    
+    const btnChange = document.querySelector('#btnChange');
+    const divChange = document.querySelector('#divChange');
+    const formPass = document.querySelector('#formPass');
+    const nueva = document.querySelector('#nueva');
+    const confirmar = document.querySelector('#confirmar');
+    const inputRespuesta = document.querySelector('#inputRespuesta');
+    
+    btnChange.addEventListener('click', (e) => {
+        e.preventDefault();
+        btnChange.classList.add('d-none');
+        divChange.classList.replace('d-none', 'd-block')
+    });
+
+    formPass.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if(nueva.value == confirmar.value){
+            localInfo.pass = nueva.value;
+            usuario[0] = nueva.value;
+            localStorage.setItem(correo, JSON.stringify(localInfo));
+            inputRespuesta.textContent = 'Contraseña Cambiada Correctamente';
+        }else{
+            inputRespuesta.textContent = 'Las contraseñas no coinciden';
+        }
+    })
+
+    
 
 });
 

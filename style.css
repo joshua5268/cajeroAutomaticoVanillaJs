@@ -1,4 +1,4 @@
-*´{
+*{
     margin: 0;
     padding: 0;
 
@@ -19,7 +19,7 @@
 }
 
 .header2{
-    height: 7vh;
+    min-height: 7vh;
     background-color: #90afc5;
 }
 
@@ -34,13 +34,24 @@
 
 .main2{
     width: 100%;
-    height: 86vh;
+    min-height: 86vh;
     background-color: #336b87;
+}
+
+.container-img{
+    border: .5px solid black;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+}
+
+.perfil h5{
+    color: #2a3132;
 }
 
 .pie2{
     width: 100%;
-    height: 7vh;
+    min-height: 7vh;
     background-color: #2a3132;
 }
 
@@ -52,4 +63,9 @@
     text-decoration: none;
     color: white;
     font-size: 18px;
+}
+
+.nav-link:hover{
+    background-color: #2a3132;
+    color: white;
 }

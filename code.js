@@ -435,7 +435,7 @@ window.onkeypress = resetear;
 
 function iniciar() {
     segundos++;
-    if(segundos == 20){
+    if(segundos == 2000){
         alert('La sesion ha expirado');
         localStorage.removeItem('correo');
         window.open('index.html', "_self");

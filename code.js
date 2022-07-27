@@ -3,9 +3,11 @@ const inicio = document.querySelector('#tagInicio');
 const retiro = document.querySelector('#tagRetiro');
 const ingreso = document.querySelector('#tagIngreso');
 const perfil = document.querySelector('#tagDatos');
+const tagTransferencias = document.querySelector('#tagTransferencias');
 const inputSaldo = document.querySelector('#inputSaldo');
 const bienvenida = document.querySelector('#bienvenida');
 const btnCerrar = document.querySelector('#btnCerrar');
+const btnFlip = document.querySelector('#flip');
 
 const usuarioLocal = localStorage.getItem('correo');
 const usuario = users.filter(user => user.correo == usuarioLocal);
@@ -100,10 +102,10 @@ function pintaTextoS(a){
 
 inicio.addEventListener('click', () => {
     const cuerpo =  `
-    <div class="tarjeta mt-5">
+    <div class="tarjeta mt-5 rotar2" id="flip"">
         <div class="box">
             <div class="card front d-flex justify-content-center align-items-center">
-                <i class="bi bi-eye-slash-fill" style="font-size: 3rem;"></i>
+            <p>Presiona aqui para consultar tu saldo actual</p>
             </div>
             <div class="card back d-flex justify-content-center align-items-center">
                 <h3 class="card-title mb-5">Tu saldo actual es de: </h3>
@@ -119,6 +121,17 @@ inicio.addEventListener('click', () => {
     retiro.firstElementChild.classList.remove('active');
     ingreso.firstElementChild.classList.remove('active');
     perfil.firstElementChild.classList.remove('active');
+    tagTransferencias.firstElementChild.classList.remove('active');
+
+    const btnFlip = document.querySelector('#flip');
+
+    btnFlip.addEventListener('click', () => {
+        if(btnFlip.classList.contains('rotar2')){
+            btnFlip.classList.replace('rotar2', 'rotar1');
+        }else{
+            btnFlip.classList.replace('rotar1', 'rotar2');
+        }
+    });
 
 });
 
@@ -146,6 +159,7 @@ retiro.addEventListener('click', () => {
     inicio.firstElementChild.classList.remove('active');
     ingreso.firstElementChild.classList.remove('active');
     perfil.firstElementChild.classList.remove('active');
+    tagTransferencias.firstElementChild.classList.remove('active');
 
     const btnRetiro = document.querySelector('#btnRetiro');
     const formRetiro = document.querySelector('#formRetiro');
@@ -193,6 +207,7 @@ ingreso.addEventListener('click', () => {
     inicio.firstElementChild.classList.remove('active');
     retiro.firstElementChild.classList.remove('active');
     perfil.firstElementChild.classList.remove('active');
+    tagTransferencias.firstElementChild.classList.remove('active');
 
     const btnIngreso = document.querySelector('#btnIngreso');
     const formIngreso = document.querySelector('#formIngreso');
@@ -253,6 +268,7 @@ perfil.addEventListener('click', () => {
     inicio.firstElementChild.classList.remove('active');
     retiro.firstElementChild.classList.remove('active');
     perfil.firstElementChild.classList.add('active');
+    tagTransferencias.firstElementChild.classList.remove('active');
     
     const btnChange = document.querySelector('#btnChange');
     const divChange = document.querySelector('#divChange');
@@ -278,9 +294,78 @@ perfil.addEventListener('click', () => {
             inputRespuesta.textContent = 'Las contraseñas no coinciden';
         }
     })
+});
 
+
+tagTransferencias.addEventListener('click', () => {
+    let opciones = ``;
+    for (const key in users) {
+        opciones += `<option value="${users[key].correo}">${users[key].correo}</option>`
+    }
+
+    const cuerpo = `
+    <div class="card my-5 p-5 text-center">
+            <h3 class="mb-4">Transferencia</h3>
+            <form id="formTrans">
+                <div class="">
+                    <label for="userTrans" class="form-label fs-6">Seleccione usuario a transferir</label>
+                    <select class="form-select mb-3" id="userTrans" required>
+                        <option value="" selected>Selecciona un usuario...</option>
+                        ${opciones}
+                    </select>
+                </div>
+                <div class="">
+                    <label for="numTrans" class="form-label fs-6">Digite cantidad a transferir</label>
+                    <input type="text" class="form-control mb-2" id="numTrans" placeholder="$" required>
+                </div>
+                <button class="btn btn-success type="submit" w-100" id="btnTrans">Confirmar</button>
+            </form>
+            <p id="inputRespuesta" class="fs-6 mt-2"></p>
+            <p id="inputTransferencia" class="fs-6 mt-2"></p>
+    </div>
+    `;
+
+    mostrarHTML(cuerpo);
+
+    ingreso.firstElementChild.classList.remove('active');
+    inicio.firstElementChild.classList.remove('active');
+    retiro.firstElementChild.classList.remove('active');
+    perfil.firstElementChild.classList.remove('active');
+    tagTransferencias.firstElementChild.classList.add('active');
+
+    const formTrans = document.querySelector('#formTrans');
+    const userTrans = document.querySelector('#userTrans');
+    const numTrans = document.querySelector('#numTrans');
+    const inputRespuesta = document.querySelector('#inputRespuesta');
+    const inputTransferencia = document.querySelector('#inputTransferencia');
+
+    formTrans.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let inputUsuario = userTrans.value;
+        let inputCantidad = numTrans.value;
+        const destino = users.filter(user => user.correo == inputUsuario)[0];
+        let envio = {saldo: destino.saldo,pass: destino.pass}
+        formTrans.reset();
+
+        if(saldo > inputCantidad){
+            if(validarMayor(Number(destino.saldo)+Number(destino.inputCantidad), inputRespuesta, inputTransferencia)){
+                destino.saldo = Number(destino.saldo)+Number(inputCantidad);
+                pintaTextoS(inputRespuesta);
+                pintaTextoS(inputTransferencia);
+                inputRespuesta.textContent = 'Transaccion Correcta';
+                inputTransferencia.textContent = `Se agrego a la cuenta de tu compañero: $${inputCantidad}`;
+                envio.saldo = destino.saldo;
+                localStorage.setItem(destino.correo, JSON.stringify(envio));
+            }
+        }else{
+            pintaTextoD(inputRespuesta);
+            inputRespuesta.textContent ='No tienes suficiente saldo';
+            inputTransferencia.textContent ='';
+        }
+
+        
+    });
     
-
 });
 
 //Cerrar sesion
@@ -288,4 +373,14 @@ perfil.addEventListener('click', () => {
 btnCerrar.addEventListener('click', () => {
     localStorage.removeItem('correo');
     window.open('index.html', "_self");
+});
+
+//flip-card
+
+btnFlip.addEventListener('click', () => {
+    if(btnFlip.classList.contains('rotar2')){
+        btnFlip.classList.replace('rotar2', 'rotar1');
+    }else{
+        btnFlip.classList.replace('rotar1', 'rotar2');
+    }
 });

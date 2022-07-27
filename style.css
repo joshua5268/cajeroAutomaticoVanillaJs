@@ -76,6 +76,7 @@
     width: 300px;
     height: 300px;
     perspective: 1000px;
+    cursor: pointer;
   }
   
   .box {
@@ -88,10 +89,18 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   }
   
-  .tarjeta:hover .box {
+  /* .tarjeta:hover .box {
+    transform: rotateY(180deg);
+  } */
+
+  .rotar1 .box{
     transform: rotateY(180deg);
   }
   
+  .rotar2 .box{
+    transform: rotateY(0deg);
+  }
+
   .front, .back{
     position: absolute;
     width: 100%;

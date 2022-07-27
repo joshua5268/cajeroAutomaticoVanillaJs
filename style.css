@@ -19,7 +19,7 @@
 }
 
 .header2{
-    min-height: 7vh;
+    height: 7vh;
     background-color: #90afc5;
 }
 
@@ -34,7 +34,7 @@
 
 .main2{
     width: 100%;
-    min-height: 86vh;
+    height: 86vh;
     background-color: #336b87;
 }
 
@@ -51,7 +51,7 @@
 
 .pie2{
     width: 100%;
-    min-height: 7vh;
+    height: 7vh;
     background-color: #2a3132;
 }
 

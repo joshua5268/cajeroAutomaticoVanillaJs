@@ -4,28 +4,33 @@ const retiro = document.querySelector('#tagRetiro');
 const ingreso = document.querySelector('#tagIngreso');
 const perfil = document.querySelector('#tagDatos');
 const tagTransferencias = document.querySelector('#tagTransferencias');
+
 const inputSaldo = document.querySelector('#inputSaldo');
 const bienvenida = document.querySelector('#bienvenida');
 const btnCerrar = document.querySelector('#btnCerrar');
 const btnFlip = document.querySelector('#flip');
 
-const usuarioLocal = localStorage.getItem('correo');
-const usuario = users.filter(user => user.correo == usuarioLocal);
+//Usuario activo
+let usuario = users.filter(user => user.correo == localStorage.getItem('correo'));
 
 //permanencia de datos
-if(localStorage.getItem(usuarioLocal)){
-    usuario[0].saldo = JSON.parse(localStorage.getItem(usuarioLocal)).saldo;
+if(localStorage.getItem(usuario[0].correo)){
+    usuario[0] = JSON.parse(localStorage.getItem(usuario[0].correo));
 }
 
+//Variables para uso rapido 
 const {name, correo, pass, foto} = usuario[0];
 let {saldo} = usuario[0];
-let localInfo = {saldo: saldo, pass: pass} //Vaiable para permanencia de datos
 
 //Mostrar saludo
 bienvenida.textContent = `Bienvenido ${name}`;
 
 //Mostrar saldo en HTML inicial
 inputSaldo.textContent = `$${saldo}`;
+
+
+
+//-------------------------------------------Funciones---------------------------------------------
 
 
 //Funcion para cambiar de HTML
@@ -43,12 +48,8 @@ function mostrarHTML(a){
 
 //Funcion que valida datos de entrada Numbers
 
-function validarCantidad(a, b, c){
+function validarCantidad(a){
     if(a <= 0 || typeof(a) == undefined || isNaN(a)){
-        pintaTextoD(b);
-        pintaTextoD(c);
-        b.textContent = 'Por favor ingrese una cantidad valida';
-        c.textContent = '';
         return false;
     }else{
         return true;
@@ -57,12 +58,8 @@ function validarCantidad(a, b, c){
 
 //Funcion valida que no sea menos de 10 o mas de 990
 
-function validarMayor(a, b, c){
+function validarMayor(a){
     if(a < 10 || a > 990){
-        pintaTextoD(b);
-        pintaTextoD(c);
-        b.textContent = 'Lo sentimos, como regla general del banco no puede tener menos de $10 o mas de $990';
-        c.textContent = '';
         return false;
     }else{
         return true;
@@ -74,14 +71,13 @@ function validarMayor(a, b, c){
 function transaccionTrue(a){
     usuario[0].saldo = a;
     saldo = usuario[0].saldo;
-    pintaTextoS(inputRespuesta);
-    pintaTextoS(inputMonto);
-    inputRespuesta.textContent = 'Transaccion Correcta';
-    inputMonto.textContent = `Tu nuevo saldo es de: $${saldo}`;
-    localInfo.saldo = saldo;
-    localStorage.setItem(correo, JSON.stringify(localInfo));
+    localStorage.setItem(correo, JSON.stringify(usuario[0]));
 }
 
+
+
+
+//Funciones para pintar texto
 function pintaTextoD(a){
     if(a.classList.contains('text-success')){
         a.classList.replace('text-success', 'text-danger');
@@ -97,6 +93,10 @@ function pintaTextoS(a){
         a.classList.add('text-success');
     }
 }
+
+
+//-----------------------Eventos---------------
+
 
 //Mostrar HTML inicio
 
@@ -144,7 +144,7 @@ retiro.addEventListener('click', () => {
             <h3>Ingresa cantidad a retirar:</h3>
             <div class="mb-3">
                 <label for="inputRetiro" class="form-label fs-5 text-white">Cantidad a retirar:</label>
-                <input type="text" class="form-control" id="inputRetiro" placeholder="$">
+                <input type="text" class="form-control" id="inputRetiro" placeholder="$" required>
             </div>
             <button class="btn btn-success mb-3" type="submit" id="btnRetiro">Confirmar</button>
             <p id="inputRespuesta" class="fs-5"></p>
@@ -173,10 +173,22 @@ retiro.addEventListener('click', () => {
         formRetiro.reset();
         let resultado = Number(saldo)-Number(monto);
 
-        if(validarCantidad(monto, inputRespuesta, inputMonto)){
-            if(validarMayor(resultado, inputRespuesta, inputMonto)){
+        if(validarCantidad(monto)){
+            if(validarMayor(resultado)){
                 transaccionTrue(resultado);
+                pintaTextoS(inputRespuesta);
+                inputRespuesta.textContent = `Transaccion Correcta`;
+                pintaTextoS(inputMonto);
+                inputMonto.textContent = `Tu Nuevo monto es de: ${saldo}`;
+            }else{
+                pintaTextoD(inputRespuesta);
+                inputRespuesta.textContent = 'No puedes tener menos de $10 en tu cuenta';
+                inputMonto.textContent = ``;
             }
+        }else{
+            pintaTextoD(inputRespuesta);
+            inputRespuesta.textContent = 'Por favor valide informacion';
+            inputMonto.textContent = ``;
         }
     });
 
@@ -221,14 +233,24 @@ ingreso.addEventListener('click', () => {
         formIngreso.reset();
         let resultado = Number(saldo)+Number(monto);
 
-        if(validarCantidad(monto, inputRespuesta, inputMonto)){
-            if(validarMayor(resultado, inputRespuesta, inputMonto)){
-                transaccionTrue(Number(saldo)+Number(monto));
+        if(validarCantidad(monto)){
+            if(validarMayor(resultado)){
+                transaccionTrue(resultado);
+                pintaTextoS(inputRespuesta);
+                inputRespuesta.textContent = `Transaccion Correcta`;
+                pintaTextoS(inputMonto);
+                inputMonto.textContent = `Tu Nuevo monto es de: ${saldo}`;
+            }else{
+                pintaTextoD(inputRespuesta);
+                inputRespuesta.textContent = 'No puedes tener menos de $990 en tu cuenta';
+                inputMonto.textContent = ``;
             }
+        }else{
+            pintaTextoD(inputRespuesta);
+            inputRespuesta.textContent = 'Por favor valide informacion';
+            inputMonto.textContent = ``;
         }
-
     });
-
 });
 
 
@@ -280,17 +302,19 @@ perfil.addEventListener('click', () => {
     btnChange.addEventListener('click', (e) => {
         e.preventDefault();
         btnChange.classList.add('d-none');
-        divChange.classList.replace('d-none', 'd-block')
+        divChange.classList.replace('d-none', 'd-block');
     });
 
     formPass.addEventListener('submit', (e) => {
         e.preventDefault();
         if(nueva.value == confirmar.value){
-            localInfo.pass = nueva.value;
-            usuario[0] = nueva.value;
-            localStorage.setItem(correo, JSON.stringify(localInfo));
-            inputRespuesta.textContent = 'Contraseña Cambiada Correctamente';
+            formPass.reset();
+            usuario[0].pass = nueva.value;
+            localStorage.setItem(correo, JSON.stringify(usuario[0]));
+            pintaTextoS(inputRespuesta);
+            inputRespuesta.textContent = 'Contraseña cambiada correctamente';
         }else{
+            pintaTextoD(inputRespuesta);
             inputRespuesta.textContent = 'Las contraseñas no coinciden';
         }
     })
@@ -300,7 +324,9 @@ perfil.addEventListener('click', () => {
 tagTransferencias.addEventListener('click', () => {
     let opciones = ``;
     for (const key in users) {
-        opciones += `<option value="${users[key].correo}">${users[key].correo}</option>`
+        if(users[key].correo != correo){
+            opciones += `<option value="${users[key].correo}">${users[key].correo}</option>`
+        }
     }
 
     const cuerpo = `
@@ -344,28 +370,32 @@ tagTransferencias.addEventListener('click', () => {
         let inputUsuario = userTrans.value;
         let inputCantidad = numTrans.value;
         const destino = users.filter(user => user.correo == inputUsuario)[0];
-        let envio = {saldo: destino.saldo,pass: destino.pass}
+        const resultado = Number(destino.saldo)+Number(inputCantidad);
         formTrans.reset();
-
-        if(saldo > inputCantidad){
-            if(validarMayor(Number(destino.saldo)+Number(destino.inputCantidad), inputRespuesta, inputTransferencia)){
-                destino.saldo = Number(destino.saldo)+Number(inputCantidad);
-                pintaTextoS(inputRespuesta);
-                pintaTextoS(inputTransferencia);
-                inputRespuesta.textContent = 'Transaccion Correcta';
-                inputTransferencia.textContent = `Se agrego a la cuenta de tu compañero: $${inputCantidad}`;
-                envio.saldo = destino.saldo;
-                localStorage.setItem(destino.correo, JSON.stringify(envio));
+        
+        if(validarCantidad(inputCantidad)){
+            if(saldo-10 > inputCantidad){
+                if(validarMayor(resultado)){
+                    usuario[0].saldo -= inputCantidad;
+                    saldo = usuario[0].saldo;
+                    localStorage.setItem(usuario[0].correo, JSON.stringify(usuario[0]));
+                    destino.saldo = Number(resultado);
+                    localStorage.setItem(destino.correo, JSON.stringify(destino));
+                    pintaTextoS(inputRespuesta);
+                    inputRespuesta.textContent = 'Transsaccion Correcta';
+                }else{
+                    pintaTextoD(inputRespuesta);
+                    inputRespuesta.textContent = 'Transsaccion incorrecta por politicas del banco';
+                }
+            }else{
+                pintaTextoD(inputRespuesta);
+                inputRespuesta.textContent = 'No tienes suficiente saldo';
             }
         }else{
             pintaTextoD(inputRespuesta);
-            inputRespuesta.textContent ='No tienes suficiente saldo';
-            inputTransferencia.textContent ='';
+            inputRespuesta.textContent = 'Por favor valide la informacion';
         }
-
-        
     });
-    
 });
 
 //Cerrar sesion
@@ -384,3 +414,30 @@ btnFlip.addEventListener('click', () => {
         btnFlip.classList.replace('rotar1', 'rotar2');
     }
 });
+
+
+let tiempo, segundos = 0;
+  
+function resetear() {
+    clearInterval(tiempo);
+    segundos = 0;
+    tiempo = setInterval(iniciar, 1000);
+}
+
+// Define the events that
+// would reset the timer
+window.onload = resetear;
+window.onmousemove = resetear;
+window.onmousedown = resetear;
+window.ontouchstart = resetear;
+window.onclick = resetear;
+window.onkeypress = resetear;
+
+function iniciar() {
+    segundos++;
+    if(segundos == 20){
+        alert('La sesion ha expirado');
+        localStorage.removeItem('correo');
+        window.open('index.html', "_self");
+    }
+}

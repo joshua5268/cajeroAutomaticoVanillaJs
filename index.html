@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco</title>
+    <title>Banca-DEV</title>
+    <link rel="icon" href="icono.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -21,11 +22,11 @@
                 <form id="formLogin">
                     <div class="mb-3">
                         <label for="correo" class="form-label fs-5 text-white">Correo:</label>
-                        <input type="text" class="form-control" id="correo" placeholder="correo">
+                        <input type="text" class="form-control" id="correo" placeholder="correo" required>
                     </div>
                     <div class="mb-3">
                         <label for="pass" class="form-label fs-5 text-white">Contraseña</label>
-                        <input type="password" class="form-control" id="pass" placeholder="Contraseña">
+                        <input type="password" class="form-control" id="pass" placeholder="Contraseña" required>
                     </div>
                     <button class="btn btn-success w-100" type="submit" id="btnLogin">Ingresar</button>
                     <p id="respuesta" class="text-center text-info fs-5 mt-5"></p>

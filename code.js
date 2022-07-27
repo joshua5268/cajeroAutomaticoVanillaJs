@@ -414,3 +414,30 @@ btnFlip.addEventListener('click', () => {
         btnFlip.classList.replace('rotar1', 'rotar2');
     }
 });
+
+
+let tiempo, segundos = 0;
+  
+function resetear() {
+    clearInterval(tiempo);
+    segundos = 0;
+    tiempo = setInterval(iniciar, 1000);
+}
+
+// Define the events that
+// would reset the timer
+window.onload = resetear;
+window.onmousemove = resetear;
+window.onmousedown = resetear;
+window.ontouchstart = resetear;
+window.onclick = resetear;
+window.onkeypress = resetear;
+
+function iniciar() {
+    segundos++;
+    if(segundos == 20){
+        alert('La sesion ha expirado');
+        localStorage.removeItem('correo');
+        window.open('index.html', "_self");
+    }
+}

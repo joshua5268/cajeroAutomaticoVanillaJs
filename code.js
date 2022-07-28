@@ -242,7 +242,7 @@ ingreso.addEventListener('click', () => {
                 inputMonto.textContent = `Tu Nuevo monto es de: ${saldo}`;
             }else{
                 pintaTextoD(inputRespuesta);
-                inputRespuesta.textContent = 'No puedes tener menos de $990 en tu cuenta';
+                inputRespuesta.textContent = 'No puedes tener mas de $990 en tu cuenta';
                 inputMonto.textContent = ``;
             }
         }else{

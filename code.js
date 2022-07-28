@@ -308,11 +308,11 @@ perfil.addEventListener('click', () => {
     formPass.addEventListener('submit', (e) => {
         e.preventDefault();
         if(nueva.value == confirmar.value){
-            formPass.reset();
             usuario[0].pass = nueva.value;
             localStorage.setItem(correo, JSON.stringify(usuario[0]));
             pintaTextoS(inputRespuesta);
             inputRespuesta.textContent = 'Contraseña cambiada correctamente';
+            formPass.reset();
         }else{
             pintaTextoD(inputRespuesta);
             inputRespuesta.textContent = 'Las contraseñas no coinciden';

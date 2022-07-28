@@ -382,10 +382,10 @@ tagTransferencias.addEventListener('click', () => {
                     destino.saldo = Number(resultado);
                     localStorage.setItem(destino.correo, JSON.stringify(destino));
                     pintaTextoS(inputRespuesta);
-                    inputRespuesta.textContent = 'Transsaccion Correcta';
+                    inputRespuesta.textContent = 'Transaccion Correcta';
                 }else{
                     pintaTextoD(inputRespuesta);
-                    inputRespuesta.textContent = 'Transsaccion incorrecta por politicas del banco';
+                    inputRespuesta.textContent = 'Transaccion incorrecta por politicas del banco';
                 }
             }else{
                 pintaTextoD(inputRespuesta);
